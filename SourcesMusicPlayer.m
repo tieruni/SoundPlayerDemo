@@ -30,8 +30,12 @@
     /*设置播放器*/
     _player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
     _player.volume = 0.8;//音量
-    _player.numberOfLoops = -1;//0表示只播放一次,1表示播放2次，依此类推，负数表示无限循环
         
+    if ([mscName isEqualToString:@"prepareMusic.mp3"]) {
+        _player.numberOfLoops = 0;//0表示只播放一次,1表示播放2次，依此类推，负数表示无限循环
+        _player.delegate = self;
+    }
+    
     if (self.isPause == NO) {
         [self startMusic];//播放
     }else{
@@ -47,7 +51,6 @@
 
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"MscState"];
 
-    _player.delegate = self;
 }
 
 - (void)pauseMusic{
@@ -70,8 +73,9 @@
 
 #pragma mark -- delegate
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag{
-    //背景音乐播放完后需要做的操作
-    
+    //音乐播放完后需要做的操作
+    _player.numberOfLoops = -1;//循环播放
+    [[SourcesMusicPlayer shareMusicManage] playMusic:@"background.mp3"];
 }
 
 //添加音效
